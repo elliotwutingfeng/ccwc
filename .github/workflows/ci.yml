@@ -34,3 +34,4 @@ jobs:
     - name: Coveralls (ubuntu-latest only)
       if: matrix.os == 'ubuntu-latest'
       uses: coverallsapp/github-action@v2
+      file: 'coverage.cov'
