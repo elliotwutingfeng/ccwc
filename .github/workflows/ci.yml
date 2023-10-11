@@ -1,0 +1,61 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  format-markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Format Markdown with markdownlint
+        run: |
+          npm install -g markdownlint-cli
+          markdownlint --disable MD013 MD033 --fix . --ignore CODE_OF_CONDUCT.md
+          git add -A
+          git diff --cached --exit-code
+  test-and-coverage:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # to support `git describe`
+    - name: Setup go
+      uses: actions/setup-go@v4
+      with:
+        go-version-file: './go.mod'
+    - name: Test
+      run: make tests
+    - name: Build CLI app
+      run: make build_cli
+    - name: |
+        If HEAD is not tagged, CLI app version tag should be newer than latest git version tag
+        If HEAD is tagged, CLI app version tag should be equal to latest git version tag
+      shell: bash
+      run: |
+        LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+        CLI_TAG=$(dist/ccwc -v | awk '{print $NF}')
+        if [[ $( printf $LATEST_TAG"\n"$CLI_TAG ) != $( printf $LATEST_TAG"\n"$CLI_TAG | sort -V ) ]]
+        then
+          echo "Expected CLI app version number $CLI_TAG to be newer than or equal to latest git version number $LATEST_TAG. Check Makefile."
+          exit 1
+        fi
+        if [[ $(git describe --exact-match --tags HEAD 2>&1) =~ .*"no tag exactly matches".* ]]; then
+          if [[ $LATEST_TAG == $CLI_TAG ]]
+          then
+            echo "HEAD is not tagged. Expected CLI app version number $CLI_TAG to be newer than latest git version number $LATEST_TAG. Check Makefile."
+            exit 1
+          fi
+        else
+          if [[ $LATEST_TAG != $CLI_TAG ]]
+          then
+            echo "HEAD is tagged. Expected CLI app version number $CLI_TAG to equal to latest git version number $LATEST_TAG. Check Makefile."
+            exit 1
+          fi
+        fi
+    - name: Upload coverage to Codecov (ubuntu-latest only)
+      if: matrix.os == 'ubuntu-latest'
+      uses: codecov/codecov-action@v3
