@@ -33,13 +33,13 @@ var cmd = &cli.Command{
 	Name:                   "ccwc",
 	Usage:                  "Count bytes, lines, words, and characters in a file",
 	UseShortOptionHandling: true,
-	Action: func(cCtx *cli.Context) error {
+	Action: func(ctx context.Context, cmd *cli.Command) error {
 		var filename string
 		var content []byte
 		var err error
 
-		if cCtx.NArg() > 0 {
-			filename = cCtx.Args().Get(0)
+		if cmd.NArg() > 0 {
+			filename = cmd.Args().Get(0)
 			content, err = os.ReadFile(filename)
 			if err != nil {
 				fmt.Println(fmt.Errorf("ccwc: %s: No such file or directory", filename).Error())
@@ -53,16 +53,16 @@ var cmd = &cli.Command{
 		}
 		c, l, w, m := ccwc.Counts(content)
 		var output []string
-		if cCtx.Bool("c") {
+		if cmd.Bool("c") {
 			output = append(output, c)
 		}
-		if cCtx.Bool("l") {
+		if cmd.Bool("l") {
 			output = append(output, l)
 		}
-		if cCtx.Bool("w") {
+		if cmd.Bool("w") {
 			output = append(output, w)
 		}
-		if cCtx.Bool("m") {
+		if cmd.Bool("m") {
 			output = append(output, m)
 		}
 
