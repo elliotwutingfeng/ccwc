@@ -1,10 +1,9 @@
 # ccwc
 
 [![Go Reference](https://img.shields.io/badge/go-reference-blue?logo=go&logoColor=white&style=for-the-badge)](https://pkg.go.dev/github.com/elliotwutingfeng/ccwc)
-[![Go Report Card](https://goreportcard.com/badge/github.com/elliotwutingfeng/ccwc?style=for-the-badge)](https://goreportcard.com/report/github.com/elliotwutingfeng/ccwc)
 [![Coveralls](https://img.shields.io/coverallsCoverage/github/elliotwutingfeng/ccwc?logo=coveralls&style=for-the-badge)](https://coveralls.io/github/elliotwutingfeng/ccwc?branch=main)<img src='https://coveralls.io/repos/github/elliotwutingfeng/ccwc/badge.svg?branch=main' alt='' width="0" height="0" />
 
-[![GitHub license](https://img.shields.io/badge/LICENSE-BSD--3--CLAUSE-GREEN?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/LICENSE-BSD--3--CLAUSE-GREEN?style=for-the-badge)](LICENSE)
 
 ## Summary
 
